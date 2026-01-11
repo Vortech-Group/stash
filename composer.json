@@ -1,0 +1,64 @@
+{
+    "name": "vortech/stash",
+    "description": "Stores and retrieves loose values",
+    "keywords": [
+        "vortech",
+        "stash"
+    ],
+    "homepage": "https://github.com/vortech/stash",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Mate Papp",
+            "email": "mate@vortech.hu",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/config": "*",
+        "illuminate/support": "^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.8",
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-laravel": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vortech\\Stash\\": "src"
+        },
+        "files": [
+            "src/Supports/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vortech\\Stash\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vortech\\Stash\\Providers\\StashServiceProvider"
+            ],
+            "aliases": {
+                "Stash": "Vortech\\Stash\\Facades\\StashFacade"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
