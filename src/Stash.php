@@ -16,7 +16,7 @@ readonly class Stash implements Countable
 
     public static function make(string $fileName = 'default', array|null $values = null): static
     {
-        $stash = (new static())->init($fileName);
+        $stash = new static()->init($fileName);
 
         if (! is_null($values)) {
             $stash->put($values);
@@ -32,6 +32,16 @@ readonly class Stash implements Countable
         $this->path = Str::of(config('stash.path'))->append('/')->append($this->fileName)->toString();
 
         return $this;
+    }
+
+    public function path(): string|null
+    {
+        return file_exists($this->path) ? $this->path : null;
+    }
+
+    public function fileName(): string|null
+    {
+        return file_exists($this->path) ? $this->fileName : null;
     }
 
     public function put(array|string $name, mixed $value = null): static
@@ -95,7 +105,7 @@ readonly class Stash implements Countable
 
     public function all(): Fluent
     {
-        if (! file_exists($this->path)) {
+        if (! $this->path()) {
             return fluent([]);
         }
 

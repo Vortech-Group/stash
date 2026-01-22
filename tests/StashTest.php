@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Vortech\Stash\Stash;
 
 it('can be called by helper', function () {
@@ -32,4 +34,14 @@ it('can store arrays', function () {
     $stash = Stash::make()->put('array', $array);
 
     expect($stash->get('array'))->toBe($array);
+});
+
+it('can unlink the created file', function () {
+    $stash = stash()->put('test', 'value');
+
+    expect($stash->get('test'))->toBe('value');
+
+    $stash->flush();
+
+    expect($stash->path())->toBeNull();
 });
