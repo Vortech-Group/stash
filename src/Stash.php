@@ -31,7 +31,7 @@ final readonly class Stash implements Countable
      */
     public static function make(string $name = 'default', ?array $values = null, ?string $driver = null): self
     {
-        $stash = app('stash')->store($name, $driver);
+        $stash = app(StashManager::class)->store($name, $driver);
 
         if ($values !== null) {
             $stash->put($values);
