@@ -4,176 +4,196 @@ declare(strict_types=1);
 
 namespace Vortech\Stash;
 
+use Closure;
 use Countable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
-use Illuminate\Support\Str;
+use InvalidArgumentException;
+use Vortech\Stash\Contracts\Driver;
 
-readonly class Stash implements Countable
+final readonly class Stash implements Countable
 {
-    protected string $fileName;
+    public function __construct(
+        private Driver $driver,
+        private string $name = 'default',
+    ) {
+        // The name ends up in file names and queries, so keep it boring.
+        if (! preg_match('/^[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*$/', $name)) {
+            throw new InvalidArgumentException(
+                "Invalid stash name [{$name}]. Use letters, numbers, dashes, underscores and dots only."
+            );
+        }
+    }
 
-    protected string $path;
-
-    public static function make(string $fileName = 'default', array|null $values = null): static
+    /**
+     * @param array<string, mixed>|null $values
+     */
+    public static function make(string $name = 'default', ?array $values = null, ?string $driver = null): self
     {
-        $stash = new static()->init($fileName);
+        $stash = app('stash')->store($name, $driver);
 
-        if (! is_null($values)) {
+        if ($values !== null) {
             $stash->put($values);
         }
 
         return $stash;
     }
 
-    protected function init(string $fileName): static
+    public function name(): string
     {
-        $this->fileName = Str::of($fileName)->append('.json')->toString();
-
-        $this->path = Str::of(config('stash.path'))->append('/')->append($this->fileName)->toString();
-
-        return $this;
+        return $this->name;
     }
 
-    public function path(): string|null
+    public function driver(): Driver
     {
-        return file_exists($this->path) ? $this->path : null;
+        return $this->driver;
     }
 
-    public function fileName(): string|null
+    /**
+     * Whether anything is persisted for this stash.
+     */
+    public function exists(): bool
     {
-        return file_exists($this->path) ? $this->fileName : null;
+        return $this->driver->exists($this->name);
     }
 
-    public function put(array|string $name, mixed $value = null): static
+    /**
+     * Stores a value (dot notation is supported), or an array of key => value pairs.
+     */
+    public function put(array|string $key, mixed $value = null): self
     {
-        if ($name === []) {
+        $pairs = is_array($key) ? $key : [$key => $value];
+
+        if ($pairs === []) {
             return $this;
         }
 
-        $newValues = $name;
+        $values = $this->all();
 
-        if (! is_array($name)) {
-            $newValues = [$name => $value];
+        foreach ($pairs as $k => $v) {
+            Arr::set($values, (string) $k, $v);
         }
 
-        $newContent = array_merge($this->all()->toArray(), $newValues);
-
-        $this->setContent($newContent);
-
-        return $this;
+        return $this->save($values);
     }
 
-    public function push(string $name, mixed $value): static
+    /**
+     * Appends to a list. Existing scalar values are turned into a list first.
+     */
+    public function push(string $key, mixed $value): self
     {
-        if (! is_array($value)) {
-            $value = [$value];
+        $current = Arr::wrap($this->get($key));
+
+        return $this->put($key, [...$current, ...Arr::wrap($value)]);
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return Arr::get($this->all(), $key, $default);
+    }
+
+    /**
+     * Gets a value, or stores and returns the callback result when it is missing.
+     */
+    public function remember(string $key, Closure $callback): mixed
+    {
+        $values = $this->all();
+
+        if (Arr::has($values, $key)) {
+            return Arr::get($values, $key);
         }
 
-        if (! $this->has($name)) {
-            $this->put($name, $value);
+        $value = $callback();
 
-            return $this;
-        }
-
-        $oldValue = $this->get($name);
-
-        if (! is_array($oldValue)) {
-            $oldValue = [$oldValue];
-        }
-
-        $newValue = array_merge($oldValue, $value);
-
-        $this->put($name, $newValue);
-
-        return $this;
-    }
-
-    public function get(string $name, mixed $default = null): mixed
-    {
-        return $this->all()->get($name, $default);
-    }
-
-    public function fluent(string $name, mixed $default = null): Fluent
-    {
-        return fluent($this->get($name, $default));
-    }
-
-    public function has(string $name): bool
-    {
-        return $this->all()->has($name);
-    }
-
-    public function all(): Fluent
-    {
-        if (! $this->path()) {
-            return fluent([]);
-        }
-
-        return fluent(json_decode(file_get_contents($this->path), true));
-    }
-
-    public function forget(string $key): static
-    {
-        $content = $this->all()->toArray();
-
-        unset($content[$key]);
-
-        $this->setContent($content);
-
-        return $this;
-    }
-
-    public function flush(): static
-    {
-        return $this->setContent([]);
-    }
-
-    public function pull(string $name): mixed
-    {
-        $value = $this->get($name);
-
-        $this->forget($name);
+        $this->put($key, $value);
 
         return $value;
     }
 
-    public function increment(string $name, int $by = 1): mixed
+    public function fluent(string $key, mixed $default = null): Fluent
     {
-        $currentValue = $this->get($name) ?? 0;
-
-        if (! $this->isNumber($currentValue)) {
-            return $currentValue;
-        }
-
-        $newValue = $currentValue + $by;
-
-        $this->put($name, $newValue);
-
-        return $newValue;
+        return new Fluent(Arr::wrap($this->get($key, $default)));
     }
 
-    public function decrement(string $name, int $by = 1): mixed
+    public function has(string $key): bool
     {
-        return $this->increment($name, $by * -1);
+        return Arr::has($this->all(), $key);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function all(): array
+    {
+        return $this->driver->read($this->name);
+    }
+
+    public function collect(): Collection
+    {
+        return new Collection($this->all());
+    }
+
+    public function forget(string|array $keys): self
+    {
+        $values = $this->all();
+
+        Arr::forget($values, $keys);
+
+        return $this->save($values);
+    }
+
+    public function flush(): self
+    {
+        $this->driver->delete($this->name);
+
+        return $this;
+    }
+
+    public function pull(string $key, mixed $default = null): mixed
+    {
+        $value = $this->get($key, $default);
+
+        $this->forget($key);
+
+        return $value;
+    }
+
+    public function increment(string $key, int|float $by = 1): int|float
+    {
+        $current = $this->get($key) ?? 0;
+
+        if (! is_int($current) && ! is_float($current)) {
+            throw new InvalidArgumentException("Stash value [{$key}] is not a number.");
+        }
+
+        $new = $current + $by;
+
+        $this->put($key, $new);
+
+        return $new;
+    }
+
+    public function decrement(string $key, int|float $by = 1): int|float
+    {
+        return $this->increment($key, -$by);
     }
 
     public function count(): int
     {
-        return $this->all()->collect()->count();
+        return count($this->all());
     }
 
-    protected function isNumber($value): bool
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function save(array $values): self
     {
-        return is_int($value) || is_float($value);
-    }
-
-    protected function setContent(array $values): static
-    {
-        file_put_contents($this->path, json_encode($values));
-
-        if (! count($values)) {
-            unlink($this->path);
+        if ($values === []) {
+            return $this->flush();
         }
+
+        $this->driver->write($this->name, $values);
 
         return $this;
     }

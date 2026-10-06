@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="t">
+  <title id="t">Laravel Stash by Vortech</title>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity=".04"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="400" fill="#08090a"/>
+  <rect width="1280" height="400" fill="url(#grid)"/>
+  <rect x="0" y="0" width="6" height="400" fill="#CF000F"/>
+
+  <g font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="80" y="128" fill="#8b8c8a" font-size="18" font-weight="600" letter-spacing="4">VORTECH  /  LARAVEL PACKAGE</text>
+    <text x="80" y="212" fill="#f4f4f2" font-size="72" font-weight="800" letter-spacing="-2">Laravel <tspan fill="#CF000F">Stash</tspan></text>
+    <text x="80" y="266" fill="#8b8c8a" font-size="24">Store loose values in a file,</text>
+    <text x="80" y="300" fill="#8b8c8a" font-size="24">a database or any driver.</text>
+  </g>
+
+  <!-- code mock -->
+  <g transform="translate(750,56)" font-family="'SF Mono', Menlo, Consolas, monospace" font-size="16">
+    <rect width="470" height="288" rx="12" fill="#0c0d0e" stroke="#575856" stroke-opacity=".6"/>
+    <rect width="470" height="40" rx="12" fill="#ffffff" fill-opacity=".04"/>
+    <circle cx="24" cy="20" r="5" fill="#575856"/>
+    <circle cx="42" cy="20" r="5" fill="#575856"/>
+    <circle cx="60" cy="20" r="5" fill="#575856"/>
+
+    <text x="24" y="84" fill="#8b8c8a"><tspan fill="#f4f4f2">stash</tspan>()-&gt;<tspan fill="#f4f4f2">put</tspan>(<tspan fill="#CF000F">'last_sync'</tspan>, now());</text>
+    <text x="24" y="116" fill="#8b8c8a"><tspan fill="#f4f4f2">stash</tspan>(<tspan fill="#CF000F">'settings'</tspan>)</text>
+    <text x="48" y="140" fill="#8b8c8a">-&gt;<tspan fill="#f4f4f2">put</tspan>(<tspan fill="#CF000F">'theme.color'</tspan>, <tspan fill="#CF000F">'blue'</tspan>);</text>
+    <text x="24" y="172" fill="#8b8c8a">Stash::<tspan fill="#f4f4f2">increment</tspan>(<tspan fill="#CF000F">'visits'</tspan>);</text>
+
+    <line x1="24" y1="200" x2="446" y2="200" stroke="#575856" stroke-opacity=".5" stroke-width="2"/>
+
+    <rect x="24" y="224" width="72" height="26" rx="13" fill="#CF000F"/>
+    <text x="60" y="242" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700">file</text>
+    <rect x="108" y="224" width="96" height="26" rx="13" fill="none" stroke="#575856"/>
+    <text x="156" y="242" text-anchor="middle" fill="#8b8c8a" font-size="14" font-weight="700">database</text>
+    <rect x="216" y="224" width="72" height="26" rx="13" fill="none" stroke="#575856"/>
+    <text x="252" y="242" text-anchor="middle" fill="#8b8c8a" font-size="14" font-weight="700">array</text>
+    <rect x="300" y="224" width="86" height="26" rx="13" fill="none" stroke="#575856"/>
+    <text x="343" y="242" text-anchor="middle" fill="#8b8c8a" font-size="14" font-weight="700">custom</text>
+  </g>
+</svg>

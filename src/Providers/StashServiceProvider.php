@@ -6,7 +6,8 @@ namespace Vortech\Stash\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use Vortech\Stash\Stash;
+use Vortech\Stash\Commands\StashInstallCommand;
+use Vortech\Stash\StashManager;
 
 final class StashServiceProvider extends ServiceProvider
 {
@@ -24,9 +25,8 @@ final class StashServiceProvider extends ServiceProvider
             key: 'stash'
         );
 
-        $this->app->singleton('stash', function () {
-            return new Stash;
-        });
+        $this->app->singleton('stash', fn ($app) => new StashManager($app));
+        $this->app->alias('stash', StashManager::class);
     }
 
     private function offerPublishing(): void
@@ -37,10 +37,23 @@ final class StashServiceProvider extends ServiceProvider
 
         $this->publishes(
             paths: [
-                __DIR__ . '/../../config/stash.php' => config_path('stash.php')
+                __DIR__ . '/../../config/stash.php' => config_path('stash.php'),
             ],
             groups: 'stash-config'
         );
+
+        $this->publishes(
+            paths: [
+                __DIR__ . '/../../database/migrations/create_stash_table.php.stub' => database_path(
+                    'migrations/' . date('Y_m_d_His') . '_create_stash_table.php'
+                ),
+            ],
+            groups: 'stash-migrations'
+        );
+
+        $this->commands([
+            StashInstallCommand::class,
+        ]);
     }
 
     private function configureBladeDirectives(): void

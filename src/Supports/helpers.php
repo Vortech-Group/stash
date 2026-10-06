@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
-use Vortech\Stash\Facades\StashFacade;
+use Vortech\Stash\Stash;
 
 if (! function_exists('stash')) {
-    function stash(string $fileName = 'default', array|null $values = null) {
-        return StashFacade::getFacadeRoot()->make($fileName, $values);
+    /**
+     * @param array<string, mixed>|null $values
+     */
+    function stash(string $name = 'default', ?array $values = null, ?string $driver = null): Stash
+    {
+        return Stash::make($name, $values, $driver);
     }
 }

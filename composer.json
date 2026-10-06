@@ -1,11 +1,14 @@
 {
-    "name": "vortech/stash",
-    "description": "Stores and retrieves loose values",
+    "name": "vortech/laravel-stash",
+    "description": "Store and retrieve loose, non-sensitive values in a file, a database or any custom driver.",
     "keywords": [
         "vortech",
-        "stash"
+        "stash",
+        "laravel",
+        "storage",
+        "key-value"
     ],
-    "homepage": "https://github.com/vortech/stash",
+    "homepage": "https://github.com/Vortech-Group/stash",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -16,14 +19,17 @@
         }
     ],
     "require": {
-        "php": "^8.2",
-        "illuminate/config": "*",
-        "illuminate/support": "^12.0"
+        "php": "^8.4",
+        "illuminate/config": "^13.0",
+        "illuminate/support": "^13.0"
+    },
+    "suggest": {
+        "illuminate/database": "Required to use the database driver (^13.0)."
     },
     "require-dev": {
-        "orchestra/testbench": "^10.8",
-        "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-laravel": "^3.2"
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-laravel": "^5.0"
     },
     "autoload": {
         "psr-4": {
