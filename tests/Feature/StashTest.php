@@ -44,7 +44,7 @@ it('rejects unsafe names', function (string $name) {
 })->with(['../evil', 'a/b', '', 'a..b', '.hidden'])->throws(InvalidArgumentException::class);
 
 it('uses the file driver by default and creates the directory', function () {
-    $dir = sys_get_temp_dir() . '/stash-' . uniqid();
+    $dir = sys_get_temp_dir().'/stash-'.uniqid();
     config()->set('stash.drivers.file.path', $dir);
     app('stash')->forgetDrivers();
 
@@ -57,7 +57,7 @@ it('uses the file driver by default and creates the directory', function () {
 });
 
 it('throws on corrupted files instead of losing data', function () {
-    file_put_contents(__DIR__ . '/temp/broken.json', '{nope');
+    file_put_contents(config('stash.drivers.file.path').'/broken.json', '{nope');
 
     stash('broken')->all();
 })->throws(RuntimeException::class);
@@ -70,7 +70,7 @@ it('removes the file when flushed or emptied', function () {
     $stash->forget('test');
 
     expect($stash->exists())->toBeFalse()
-        ->and(file_exists(__DIR__ . '/temp/gone.json'))->toBeFalse();
+        ->and(file_exists(config('stash.drivers.file.path').'/gone.json'))->toBeFalse();
 });
 
 it('supports dot notation', function () {

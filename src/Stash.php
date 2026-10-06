@@ -27,7 +27,7 @@ final readonly class Stash implements Countable
     }
 
     /**
-     * @param array<string, mixed>|null $values
+     * @param  array<array-key, mixed>|null  $values
      */
     public static function make(string $name = 'default', ?array $values = null, ?string $driver = null): self
     {
@@ -60,6 +60,8 @@ final readonly class Stash implements Countable
 
     /**
      * Stores a value (dot notation is supported), or an array of key => value pairs.
+     *
+     * @param  array<array-key, mixed>|string  $key
      */
     public function put(array|string $key, mixed $value = null): self
     {
@@ -111,6 +113,9 @@ final readonly class Stash implements Countable
         return $value;
     }
 
+    /**
+     * @return Fluent<array-key, mixed>
+     */
     public function fluent(string $key, mixed $default = null): Fluent
     {
         return new Fluent(Arr::wrap($this->get($key, $default)));
@@ -122,18 +127,24 @@ final readonly class Stash implements Countable
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     public function all(): array
     {
         return $this->driver->read($this->name);
     }
 
+    /**
+     * @return Collection<array-key, mixed>
+     */
     public function collect(): Collection
     {
         return new Collection($this->all());
     }
 
+    /**
+     * @param  string|array<int, string>  $keys
+     */
     public function forget(string|array $keys): self
     {
         $values = $this->all();
@@ -185,7 +196,7 @@ final readonly class Stash implements Countable
     }
 
     /**
-     * @param array<string, mixed> $values
+     * @param  array<array-key, mixed>  $values
      */
     private function save(array $values): self
     {

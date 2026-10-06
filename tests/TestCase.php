@@ -18,7 +18,7 @@ abstract class TestCase extends Orchestra
 
     protected function defineEnvironment($app): void
     {
-        $app['config']->set('stash.drivers.file.path', __DIR__ . '/temp');
+        $app['config']->set('stash.drivers.file.path', __DIR__.'/temp');
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',
@@ -28,12 +28,12 @@ abstract class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
-        (require __DIR__ . '/../database/migrations/create_stash_table.php.stub')->up();
+        (require __DIR__.'/../database/migrations/create_stash_table.php.stub')->up();
     }
 
     protected function tearDown(): void
     {
-        foreach (glob(__DIR__ . '/temp/*.json') ?: [] as $file) {
+        foreach (glob(__DIR__.'/temp/*.json') ?: [] as $file) {
             unlink($file);
         }
 

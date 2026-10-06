@@ -15,14 +15,13 @@ final readonly class DatabaseDriver implements Driver
     public function __construct(
         private ConnectionInterface $connection,
         private string $table = 'stash',
-    ) {
-    }
+    ) {}
 
     public function read(string $store): array
     {
         $json = $this->query()->where('name', $store)->value('value');
 
-        if (blank($json)) {
+        if (! is_string($json) || blank($json)) {
             return [];
         }
 

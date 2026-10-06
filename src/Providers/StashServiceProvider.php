@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Vortech\Stash\Providers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Vortech\Stash\Commands\StashInstallCommand;
@@ -21,11 +22,11 @@ final class StashServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            path: __DIR__ . '/../../config/stash.php',
+            path: __DIR__.'/../../config/stash.php',
             key: 'stash'
         );
 
-        $this->app->singleton('stash', fn ($app) => new StashManager($app));
+        $this->app->singleton('stash', fn (Application $app) => new StashManager($app));
         $this->app->alias('stash', StashManager::class);
     }
 
@@ -37,15 +38,15 @@ final class StashServiceProvider extends ServiceProvider
 
         $this->publishes(
             paths: [
-                __DIR__ . '/../../config/stash.php' => config_path('stash.php'),
+                __DIR__.'/../../config/stash.php' => config_path('stash.php'),
             ],
             groups: 'stash-config'
         );
 
         $this->publishes(
             paths: [
-                __DIR__ . '/../../database/migrations/create_stash_table.php.stub' => database_path(
-                    'migrations/' . date('Y_m_d_His') . '_create_stash_table.php'
+                __DIR__.'/../../database/migrations/create_stash_table.php.stub' => database_path(
+                    'migrations/'.date('Y_m_d_His').'_create_stash_table.php'
                 ),
             ],
             groups: 'stash-migrations'
@@ -58,7 +59,7 @@ final class StashServiceProvider extends ServiceProvider
 
     private function configureBladeDirectives(): void
     {
-        Blade::directive('stash', function ($value) {
+        Blade::directive('stash', function (string $value) {
             return "<?php echo app('stash')->get($value); ?>";
         });
     }

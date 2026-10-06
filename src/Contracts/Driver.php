@@ -9,14 +9,14 @@ interface Driver
     /**
      * Returns the stored values of the given store, or an empty array if it does not exist.
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     public function read(string $store): array;
 
     /**
      * Replaces the stored values of the given store.
      *
-     * @param array<string, mixed> $values
+     * @param  array<array-key, mixed>  $values
      */
     public function write(string $store, array $values): void;
 

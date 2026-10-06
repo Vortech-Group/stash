@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Vortech-Group/stash/actions/workflows/run-tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/Vortech-Group/stash/run-tests.yml?branch=main&label=tests&style=flat-square&labelColor=08090A" alt="Tests"></a>
+  <a href="https://github.com/Vortech-Group/stash/actions/workflows/tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/Vortech-Group/stash/tests.yml?branch=main&label=tests&style=flat-square&labelColor=08090A" alt="Tests"></a>
   <a href="https://packagist.org/packages/vortech/laravel-stash"><img src="https://img.shields.io/packagist/v/vortech/laravel-stash?style=flat-square&color=CF000F&labelColor=08090A" alt="Latest version"></a>
   <a href="https://packagist.org/packages/vortech/laravel-stash"><img src="https://img.shields.io/packagist/dt/vortech/laravel-stash?style=flat-square&color=8B8C8A&labelColor=08090A" alt="Downloads"></a>
   <a href="https://packagist.org/packages/vortech/laravel-stash"><img src="https://img.shields.io/packagist/php-v/vortech/laravel-stash?style=flat-square&color=8B8C8A&labelColor=08090A" alt="PHP version"></a>

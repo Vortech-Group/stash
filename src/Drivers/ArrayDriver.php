@@ -8,7 +8,7 @@ use Vortech\Stash\Contracts\Driver;
 
 final class ArrayDriver implements Driver
 {
-    /** @var array<string, array<string, mixed>> */
+    /** @var array<string, array<array-key, mixed>> */
     private array $stores = [];
 
     public function read(string $store): array

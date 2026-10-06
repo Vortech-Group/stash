@@ -11,13 +11,11 @@ use Vortech\Stash\Contracts\Driver;
 
 final readonly class FileDriver implements Driver
 {
-    public function __construct(private string $directory)
-    {
-    }
+    public function __construct(private string $directory) {}
 
     public function path(string $store): string
     {
-        return rtrim($this->directory, '/\\') . DIRECTORY_SEPARATOR . $store . '.json';
+        return rtrim($this->directory, '/\\').DIRECTORY_SEPARATOR.$store.'.json';
     }
 
     public function read(string $store): array
@@ -58,7 +56,7 @@ final readonly class FileDriver implements Driver
         $json = json_encode($values, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         // Write to a temp file first, then rename, so readers never see a half-written file.
-        $temp = $path . '.' . bin2hex(random_bytes(6)) . '.tmp';
+        $temp = $path.'.'.bin2hex(random_bytes(6)).'.tmp';
 
         if (file_put_contents($temp, $json, LOCK_EX) === false || ! rename($temp, $path)) {
             @unlink($temp);

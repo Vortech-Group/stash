@@ -6,7 +6,7 @@ use Vortech\Stash\Stash;
 
 if (! function_exists('stash')) {
     /**
-     * @param array<string, mixed>|null $values
+     * @param  array<string, mixed>|null  $values
      */
     function stash(string $name = 'default', ?array $values = null, ?string $driver = null): Stash
     {

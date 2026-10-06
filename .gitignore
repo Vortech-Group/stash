@@ -3,3 +3,5 @@ composer.lock
 .idea
 .phpunit.cache
 .phpunit.result.cache
+.phpstan.cache
+coverage
